@@ -15,10 +15,8 @@ const ASSETS = {
   },
 };
 
-let cardNum1 = 0;
-let cardNum2 = 0;
-let cardNum3 = 0;
-let cardNum4 = 0;
+let cardNum = [];
+let score = 0;
 
 phina.define("MainScene", {
   superClass: "DisplayScene",
@@ -26,22 +24,36 @@ phina.define("MainScene", {
     this.superInit();
     this.backgroundColor = "skyblue";
 
-    //1から10の乱数を取得
-    let randnum = 1 + Math.floor(Math.random() * 10);
+    (2).times((i) => {
+      //トランプの数字を決定
+      let randnum = 1 + Math.floor(Math.random() * 10);
 
-    const card1 = Sprite(randnum.toString())
-      .addChildTo(this)
-      .setPosition(this.gridX.span(4), this.gridY.span(8))
-      .setScale(0.5,0.5);
-    cardNum1 = randnum;
+      let card = Sprite(randnum.toString())
+        .addChildTo(this)
+        .setScale(0.5,0.5);
 
-    randnum = 1 + Math.floor(Math.random() * 10);
+      card.index = randnum;
+      //１枚目と２枚目のトランプで座標の位置を変える
+      if (i === 0) {
+        card.x = this.gridX.span(4);
+      } else {
+        card.x = this.gridX.span(12);
+      }
+      card.y = this.gridY.span(8);
 
-    const card2 = Sprite(randnum.toString())
-      .addChildTo(this)
-      .setPosition(this.gridX.span(12), this.gridY.span(8))
-      .setScale(0.5,0.5);
-    cardNum2 = randnum;
+      cardNum.push(randnum);
+
+      card.setInteractive(true);
+      card.on('pointstart' ,() => { 
+        console.log(card.index);
+        if (Math.max.apply(null, cardNum) === card.index) {
+          score ++;
+        }
+        console.log(score);
+      });
+
+    });
+    console.log(cardNum);
   },
   update() {
   },
