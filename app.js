@@ -17,6 +17,29 @@ const ASSETS = {
 
 let cardNum = [];
 let score = 0;
+let randnum;
+
+function avoidSameNumber() {
+  if (randnum == 10) {
+    randnum--;
+  } else {
+    randnum++;
+  }
+}
+
+function CreateCards(hitCardIndex) {
+  randnum = 1 + Math.floor (Math.random() * 10);
+  //重複防止
+  if (randnum == cardNum[0] || randnum == cardNum[1]) {
+    avoidSameNumber();
+  }
+
+  let card = Sprite(randnum.toString())
+    .addChildTo(this)
+    .setScale(0.5,0.5);
+
+  card.index = randnum;
+}
 
 phina.define("MainScene", {
   superClass: "DisplayScene",
@@ -26,7 +49,11 @@ phina.define("MainScene", {
 
     (2).times((i) => {
       //トランプの数字を決定
-      let randnum = 1 + Math.floor(Math.random() * 10);
+      randnum = 1 + Math.floor(Math.random() * 10);
+      //重複防止
+      if (randnum == cardNum[0]) {
+        avoidSameNumber();
+      }
 
       let card = Sprite(randnum.toString())
         .addChildTo(this)
@@ -48,21 +75,21 @@ phina.define("MainScene", {
         console.log(card.index);
         if (Math.max.apply(null, cardNum) === card.index) {
           score ++;
+          CreateCards(card.index);
         }
         console.log(score);
       });
 
     });
     console.log(cardNum);
-  },
-  update() {
+
   },
 });
 
 
 phina.main(() => {
   const app = GameApp({
-    startLabel: "title",
+    startLabel: "main",
     assets: ASSETS,
   });
   app.run();
